@@ -1,7 +1,7 @@
-// knock: play a short pattern on the Force Touch trackpad's haptic motor.
+// knock: two knocks on the Force Touch trackpad's haptic motor.
 // Technique from os6/nospeaker and asadm/mechpad (private MultitouchSupport API).
 // Build: clang -O2 -fobjc-arc -framework Foundation knock.m -o knock
-// Usage: knock [done|ask|error]
+// Usage: knock
 #import <Foundation/Foundation.h>
 #import <dlfcn.h>
 #import <unistd.h>
@@ -40,7 +40,7 @@ static void hit(double base, double baseMS, NSArray<NSArray<NSNumber *> *> *tone
 }
 static void waitMS(int ms) { usleep(ms * 1000); }
 
-int main(int argc, char **argv) {
+int main(void) {
     @autoreleasepool {
         lib = dlopen("/System/Library/PrivateFrameworks/MultitouchSupport.framework/MultitouchSupport", RTLD_NOW);
         if (!lib) { fprintf(stderr, "MultitouchSupport not available\n"); return 1; }
@@ -69,14 +69,8 @@ int main(int argc, char **argv) {
         }
         if (!motor) { fprintf(stderr, "no Force Touch actuator could be opened\n"); return 1; }
 
-        NSString *p = argc > 1 ? @(argv[1]) : @"done";
-        if ([p isEqual:@"done"]) {            // two knocks on wood
-            for (int i = 0; i < 2; i++) { hit(0.5, 12, @[@[@180, @0.3, @22], @[@420, @0.2, @10]]); waitMS(140); }
-        } else if ([p isEqual:@"ask"]) {      // three rising ticks: the agent needs you
-            for (NSNumber *hz in @[@300, @450, @650]) { hit(0.3, 8, @[@[hz, @0.6, @35]]); waitMS(110); }
-        } else if ([p isEqual:@"error"]) {    // one long low buzz
-            hit(0.4, 20, @[@[@110, @0.6, @180]]);
-        } else { fprintf(stderr, "usage: knock [done|ask|error]\n"); return 1; }
+        // Two knocks on wood.
+        for (int i = 0; i < 2; i++) { hit(0.5, 12, @[@[@180, @0.3, @22], @[@420, @0.2, @10]]); waitMS(140); }
         waitMS(250);
         actuatorClose(motor);
         CFRelease(motor);

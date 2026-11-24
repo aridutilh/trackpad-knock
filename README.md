@@ -14,22 +14,6 @@ cd trackpad-knock
 
 The script compiles `knock`, puts it in `~/.local/bin`, and adds a Stop hook to `~/.claude/settings.json` (it backs the file up first). You should feel two knocks when it finishes. Restart Claude Code afterward.
 
-## Patterns
-
-| Command | Feel | Suggested meaning |
-| --- | --- | --- |
-| `knock done` | two knocks on wood | agent finished |
-| `knock ask` | three rising ticks | agent is waiting on you |
-| `knock error` | one long low buzz | something failed |
-
-Only `done` is wired up by the installer. To also get the rising ticks when Claude is waiting on a permission prompt, add a Notification hook next to the Stop hook:
-
-```json
-"Notification": [
-  { "hooks": [{ "type": "command", "command": "~/.local/bin/knock ask 2>/dev/null || true" }] }
-]
-```
-
 ## Uninstall
 
 Open `/hooks` in Claude Code and remove the `knock` entry, then `rm ~/.local/bin/knock`.
